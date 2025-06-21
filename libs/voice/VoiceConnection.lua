@@ -50,7 +50,7 @@ function VoiceConnection:onAudioPacket(packet)
 		return voiceUser._audioSSRC == ssrc
 	end)
 
-	if not voiceUser then return client:warning('Received audio data for unknown SSRC %i', ssrc) end
+	if not voiceUser then return self.client:warning('Received audio data for unknown SSRC %i', ssrc) end
 	voiceUser:setSpeaking()
 
 	if not voiceUser._subscribed then return end
@@ -63,7 +63,7 @@ function VoiceConnection:onAudioPacket(packet)
 	local message, sequence, timestamp, ssrc = self:_parseAudioPacket(packet, self._key)
 
 	if message then -- opus decode
-		local success, pcm = pcall(voiceUser.decoder.decode, decoder, message, #message, FRAME_SIZE, MAX_FRAME_SIZE)
+		local success, pcm = pcall(voiceUser.decoder.decode, voiceUser.decoder, message, #message, FRAME_SIZE, MAX_FRAME_SIZE)
 
 		if not success then
 			return socket:error('Opus decode failed: %s', pcm) -- error message
